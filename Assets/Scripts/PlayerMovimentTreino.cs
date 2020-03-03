@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mirror; //biblioteca necessaria para nomear uma classe de NetworkBehaviour?
+using Mirror; //biblioteca necessaria para nomear uma classe de NetworkBehaviour?simm
 
-[RequireComponent(typeof(Rigidbody))] //para que serve?
+[RequireComponent(typeof(Rigidbody))] //para que serve?adiciona automaticamente
 
-public class PlayerMovimentTreino : NetworkBehaviour // qual a diferença desta para a monobehaviour?
+public class PlayerMovimentTreino : NetworkBehaviour // qual a diferença desta para a monobehaviour? serve para usar o islocalplayer
 {
     public float velocidadeAndar;
     public float velocidadeGiro;
@@ -19,10 +19,15 @@ public class PlayerMovimentTreino : NetworkBehaviour // qual a diferença desta 
 
     private void Update()
     {
-        float r = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
-        Movimento(r);
-        Rotacao(y);
+        if (isLocalPlayer)// serve para cada um controlar só seu personagem?sim
+        {
+            float r = Input.GetAxis("Horizontal");
+            float y = Input.GetAxis("Vertical");
+            Movimento(r);
+            Rotacao(y);
+        }
+
+        
 
 
     }
@@ -30,18 +35,18 @@ public class PlayerMovimentTreino : NetworkBehaviour // qual a diferença desta 
     {
         float moviment = Input * velocidadeAndar * Time.deltaTime;
 
-        Vector3 direction = new Vector3(moviment, 0, 0); //aqui como eu faria para andar no eixo y?, sendo que o mesmo ja esta responsavel pela rotação?  
+        Vector3 direction = new Vector3(moviment, 0, 0);  
 
-        rigidbody_ref.MovePosition(rigidbody_ref.position + direction); // Por que o rigidbody_ref.position deve ser somado ao direction?
+        rigidbody_ref.MovePosition(rigidbody_ref.position + direction); // Por que o rigidbody_ref.position deve ser somado ao direction? o rigidbody_ref.position atualiza posição
 
     }
     public void Rotacao(float Input)
     {
         float rotacao = Input * velocidadeGiro * Time.deltaTime;
 
-        Quaternion rotation = Quaternion.Euler(0, rotacao, 0); //o euLer serve para suavizar a rotação?
+        Quaternion rotation = Quaternion.Euler(0, rotacao, 0); //o euLer serve para converter para xyz
 
-        rigidbody_ref.MoveRotation(rigidbody_ref.rotation * rotation); //Por que o rigidbody_ref.rotation deve ser multiplicado ao rotation?
+        rigidbody_ref.MoveRotation(rigidbody_ref.rotation * rotation); //Por que o rigidbody_ref.rotation deve ser multiplicado ao rotation? a multiplicação vai dar o efeito da rotação
     }
 
                                                                         
